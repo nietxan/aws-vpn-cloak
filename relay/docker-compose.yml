@@ -1,0 +1,14 @@
+services:
+  ck-server:
+    build: .
+    image: ${IMAGE:-ghcr.io/nietxan/aws-vpn-cloak-relay:latest}
+    container_name: cloak-relay
+    restart: unless-stopped
+    ports:
+      - "443:443"                  # HTTPS-looking carrier from ck-client
+    volumes:
+      - ./ckserver.json:/etc/cloak/ckserver.json:ro
+      - cloak-db:/var/lib/cloak
+
+volumes:
+  cloak-db:

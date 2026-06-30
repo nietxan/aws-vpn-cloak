@@ -1,0 +1,17 @@
+services:
+  vpn:
+    # Pull the published multi-arch image. For local dev, comment `image` and
+    # uncomment `build` below.
+    image: ${IMAGE:-ghcr.io/nietxan/aws-vpn-cloak:latest}
+    # build: .
+    container_name: aws-vpn-cloak
+    cap_add:
+      - NET_ADMIN                  # openvpn creates tun0 inside the container
+    devices:
+      - /dev/net/tun
+    ports:
+      - "127.0.0.1:${CALLBACK_PORT:-35001}:35001"   # browser SAML callback -> saml-server
+      - "127.0.0.1:${SOCKS_PORT:-1080}:1080"        # SOCKS5 -> reach the VPC
+    volumes:
+      - ./config:/config:ro        # vpn.conf + ckclient.json
+    restart: "no"                  # SAML login is interactive; don't auto-restart

@@ -1,0 +1,5 @@
+# real config (secrets / site-specific) — never commit
+config/vpn.conf
+config/ckclient.json
+saml-response.txt
+*.ovpn

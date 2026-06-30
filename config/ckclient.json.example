@@ -1,0 +1,13 @@
+{
+  "Transport": "direct",
+  "ProxyMethod": "openvpn",
+  "EncryptionMethod": "aes-gcm",
+  "UID": "<your-cloak-UID-from-the-relay>",
+  "PublicKey": "<your-cloak-PublicKey-from-the-relay>",
+  "ServerName": "www.bing.com",
+  "NumConn": 4,
+  "BrowserSig": "chrome",
+  "StreamTimeout": 300,
+  "RemoteHost": "<relay-public-ip-or-host>",
+  "RemotePort": "443"
+}

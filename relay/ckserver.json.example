@@ -1,0 +1,12 @@
+{
+  "ProxyBook": {
+    "openvpn": ["udp", "<aws-clientvpn-endpoint-host>:443"]
+  },
+  "BindAddr": [":443"],
+  "BypassUID": ["<user-UID-from-ck-server--uid>"],
+  "RedirAddr": "www.bing.com",
+  "PrivateKey": "<private-key-from-ck-server--k>",
+  "AdminUID": "<admin-UID-from-ck-server--uid>",
+  "DatabasePath": "/var/lib/cloak/userinfo.db",
+  "StreamTimeout": 300
+}
