@@ -10,11 +10,11 @@ container; you reach the VPC from your host through a SOCKS5 proxy.
  host apps ─SOCKS :1080─┐   │
                         ▼   ▼
   ┌───────────────────────────────────────────────────────────────┐
-  │ container: ck-client ──(looks like HTTPS:443)──▶ Cloak relay   │
-  │              │                                        │        │
-  │         openvpn-aws ◀── 127.0.0.1:1194 ───────────────┘        │
-  │              ▼                                                 │
-  │            tun0 ──▶ AWS Client VPN endpoint ──▶ VPC            │
+  │ container: ck-client ──(looks like HTTPS:443)──▶ Cloak relay  │
+  │              │                                        │       │
+  │         openvpn-aws ◀── 127.0.0.1:1194 ───────────────┘       │
+  │              ▼                                                │
+  │            tun0 ──▶ AWS Client VPN endpoint ──▶ VPC           │
   └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,6 +68,44 @@ psql "host=<rds-endpoint> ..."                   # via a SOCKS wrapper, e.g. `ts
 ```
 
 Reachable resources = whatever your IdP group's AWS authorization rules allow.
+
+### System-wide proxy
+
+Route all apps through the proxy instead of per-command flags.
+
+**macOS** — set SOCKS proxy for an interface (e.g. `Wi-Fi`):
+
+```bash
+networksetup -setsocksfirewallproxy Wi-Fi 127.0.0.1 1080
+networksetup -setsocksfirewallproxystate Wi-Fi on
+# disable when done
+networksetup -setsocksfirewallproxystate Wi-Fi off
+```
+
+Or set via **System Settings → Network → (interface) → Details → Proxies → SOCKS proxy** = `127.0.0.1:1080`.
+
+**Linux (GNOME)**:
+
+```bash
+gsettings set org.gnome.system.proxy mode 'manual'
+gsettings set org.gnome.system.proxy.socks host '127.0.0.1'
+gsettings set org.gnome.system.proxy.socks port 1080
+# disable when done
+gsettings set org.gnome.system.proxy mode 'none'
+```
+
+**Env vars** (shell-wide, honored by many CLIs):
+
+```bash
+export ALL_PROXY=socks5h://127.0.0.1:1080
+export http_proxy=socks5h://127.0.0.1:1080
+export https_proxy=socks5h://127.0.0.1:1080
+```
+
+Note: split tunnel only routes VPC CIDRs through `tun0`. System-wide SOCKS sends
+*all* traffic to the proxy; the proxy host still only reaches VPC resources, public
+traffic exits via the proxy's normal route. Use `socks5h://` (not `socks5://`) so
+DNS resolves through the tunnel.
 
 ## Configuration
 
